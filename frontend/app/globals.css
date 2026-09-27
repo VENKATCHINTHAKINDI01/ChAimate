@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/* ============================================================================================
+   DECCAN HOUSE — design tokens
+   Understated luxury: espresso and charcoal grounds, ivory and cream type, a single bronze accent
+   used sparingly. Hairlines instead of boxes, near-square corners, editorial serif display type.
+   ============================================================================================ */
+@theme {
+  --color-ink: #11100e;         /* page background */
+  --color-ink-2: #1b1916;       /* secondary background */
+  --color-ink-3: #24211d;       /* raised surfaces */
+  --color-cream: #f4efe7;
+  --color-ivory: #f5f1e9;       /* body text on dark */
+  --color-beige: #d8cbb9;
+  --color-muted: #9c9285;       /* secondary text — 5.9:1 on ink */
+  --color-olive: #3f4231;
+  --color-bronze: #b78a5a;      /* the one accent */
+  --color-bronze-2: #d3a878;
+  --color-line: rgb(244 239 231 / 0.12);
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  html { background: var(--color-ink); color: var(--color-ivory); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  body { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+  ::selection { background: var(--color-bronze); color: var(--color-ink); }
+  :focus-visible { outline: 1px solid var(--color-bronze-2); outline-offset: 4px; }
+  img { user-select: none; }
+}
+
+/* ---- type ---- */
+.display { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; line-height: 0.92; text-transform: uppercase; }
+.display-italic { font-family: var(--font-display); font-style: italic; font-weight: 400; letter-spacing: -0.01em; text-transform: none; }
+.eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--color-bronze-2); }
+.label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
+.lede { font-size: clamp(1rem, 1.2vw, 1.15rem); line-height: 1.75; color: var(--color-beige); }
+
+/* film grain over everything — gives photography a printed, analogue feel */
+.grain::after {
+  content: ""; position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.2s steps(6) infinite;
+}
+@keyframes grain { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -3%); } 60% { transform: translate(-1%, 3%); } 80% { transform: translate(3%, 1%); } }
+
+/* underline that draws in on hover */
+.link-line { position: relative; }
+.link-line::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .6s var(--ease-lux); }
+.link-line:hover::after, .link-line[aria-current="page"]::after { transform: scaleX(1); transform-origin: left; }
+
+/* hide native cursor only where the custom one is active (fine pointers) */
+@media (hover: hover) and (pointer: fine) { html.has-cursor, html.has-cursor * { cursor: none !important; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .grain::after { animation: none; }
+}
+
+/* maplibre attribution in the dark theme */
+.maplibregl-ctrl-attrib { background: rgb(17 16 14 / .7) !important; color: var(--color-muted) !important; font-size: 10px !important; }
+.maplibregl-ctrl-attrib a { color: var(--color-beige) !important; }

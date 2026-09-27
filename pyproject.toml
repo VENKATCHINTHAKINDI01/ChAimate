@@ -1,0 +1,21 @@
+[project]
+name = "cafe-companion"
+version = "1.0.0"
+description = "AI café companion: a real-time voice friend at every table, voice ordering, staff apps, analytics and an AI store manager."
+readme = "README.md"
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py39"
+extend-exclude = ["web/static/vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E731", "I001"]

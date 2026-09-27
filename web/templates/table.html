@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#11100E" />
+  <title>ChAimate · your chai-mate</title>
+  <link rel="icon" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/base.css" />
+  <link rel="stylesheet" href="/static/css/table.css" />
+</head>
+<body class="customer is-loading on-landing">
+  <!-- ================= PRELOADER ================= -->
+  <div id="preloader" aria-hidden="true">
+    <canvas id="preOrb"></canvas>
+    <div class="pre-word" id="preWord">Pouring your chai…</div>
+  </div>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#" id="brandLink">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 30"><path d="M3 29V13C3 7.5 8.5 3.2 12 1c3.5 2.2 9 6.5 9 12v16"/><path d="M7.5 29V15.5c0-3.4 2.7-6 4.5-7.4 1.8 1.4 4.5 4 4.5 7.4V29"/><path d="M1 29h22"/></svg></span>
+      <span id="cafeName">Café</span>
+    </a>
+    <div class="row top-right">
+      <span class="pill hidden" id="tableLabel"></span>
+      <span id="whoami" class="muted who"></span>
+      <button class="ghost hidden" id="btnSettings" title="Change mood / persona">Customise</button>
+      <button class="ghost hidden" id="btnLogout">Log out</button>
+    </div>
+  </header>
+
+  <!-- ================= LANDING ================= -->
+  <main id="landing">
+    <section class="hero" id="hero">
+      <!-- the 3D kulhad (web/static/js/scene3d.js); the photo is shown instead when a device can't do 3D -->
+      <canvas class="hero-3d" id="hero3d" aria-hidden="true"></canvas>
+      <img class="hero-fallback hidden" id="heroFallback" src="/static/img/hero/chai-osmania.jpg" alt="Irani chai with Osmania biscuits" />
+      <div class="hero-inner wrap">
+        <div class="hero-copy">
+          <span class="eyebrow reveal-up" id="heroKicker">Deccan House · Jubilee Hills</span>
+          <h1 class="hero-title" id="heroTitle"><span class="line"><span>Pull up a chair.</span></span><span class="line"><span><em>Someone's listening.</em></span></span></h1>
+          <p class="hero-sub reveal-up" id="heroSub"><span data-cname>Ch<span class="ai-mark">Ai</span>mate</span> is the companion at every table — talk in Telugu, Hindi, Urdu or English, ask anything, and order the moment you feel like it.</p>
+          <div class="row hero-cta reveal-up" id="heroCta">
+            <button class="primary big" id="btnHeroStart"><span aria-hidden="true">🎙️</span> <span>Talk to <span data-cname>Ch<span class="ai-mark">Ai</span>mate</span></span></button>
+            <button class="ghost big link-btn" id="btnHeroLogin">I've been here before →</button>
+          </div>
+          <div class="row hero-cta reveal-up hidden" id="heroWelcome">
+            <button class="primary big" id="btnContinue">Continue our chat →</button>
+            <button class="ghost big link-btn" id="btnCustomise">Customise</button>
+          </div>
+          <p class="hero-note reveal-up" id="heroNote"><span class="pill live" id="heroEyebrow"><span class="dot"></span> <span><span data-cname>Ch<span class="ai-mark">Ai</span>mate</span> is at your table</span></span> <span>No app, no sign-up · first <b id="freeMins">10</b> minutes free</span></p>
+        </div>
+      </div>
+      <div class="hero-chips" id="heroChips" aria-hidden="true"></div>
+    </section>
+
+    <section class="block wrap" id="cats">
+      <h2 class="block-title">What are you craving?</h2>
+      <div class="cat-row" id="catRow"></div>
+    </section>
+
+    <section class="block wrap" id="highlights">
+      <div class="block-head"><h2 class="block-title">Popular right now</h2><button class="link" id="btnSeeMenu">Full menu →</button></div>
+      <div class="pop-row" id="menuHighlights"></div>
+    </section>
+
+    <section class="block wrap" id="personasPin">
+      <div class="block-head"><h2 class="block-title">Pick <span data-cname>Ch<span class="ai-mark">Ai</span>mate</span>'s personality</h2></div>
+      <div class="persona-row" id="personaTrack"></div>
+    </section>
+
+    <section class="block wrap" id="how">
+      <h2 class="block-title">How it works</h2>
+      <div class="steps">
+        <div class="step reveal-card"><span class="step-ic">📱</span><b>Scan &amp; sit</b><p>Open the link on your table. Use the speaker or your earphones.</p></div>
+        <div class="step reveal-card"><span class="step-ic">🎙️</span><b>Just talk</b><p>No buttons to hold. Talk over it anytime — it listens like a friend.</p></div>
+        <div class="step reveal-card"><span class="step-ic">☕</span><b>Say it, get it</b><p>“One Irani chai, less sugar” goes straight to the counter.</p></div>
+      </div>
+    </section>
+
+    <section class="block wrap">
+      <div class="offer reveal-card">
+        <div>
+          <h2 class="offer-title">Your first <span id="freeMins2">10</span> minutes are on us</h2>
+          <p class="muted">Then just <b id="perMin">₹2</b> a minute of real conversation. Silences are free, and it simply shows up on your bill.</p>
+        </div>
+        <div class="offer-ring" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg" id="offerRing"/></svg>
+          <div class="offer-num" id="offerNum">10</div>
+          <div class="offer-lbl">free min</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer wrap">
+      <h2>Your chai's getting cold.<br/><em>Let's talk.</em></h2>
+      <button class="primary big" id="btnFooterStart"><span aria-hidden="true">🎙️</span> <span>Talk to <span data-cname>Ch<span class="ai-mark">Ai</span>mate</span></span></button>
+      <p class="muted small">Private by design — you decide what <span data-cname>Ch<span class="ai-mark">Ai</span>mate</span> remembers.</p>
+      <a class="site-link" href="/">← Back to Deccan House</a>
+      <p class="credits">Food photos from Wikimedia Commons, used under their CC BY / CC BY-SA / CC0 licences — photographers and licences are listed in <a href="/static/img/CREDITS.json">CREDITS.json</a>.</p>
+    </footer>
+  </main>
+
+  <!-- ================= LOGIN / SIGN UP ================= -->
+  <div class="overlay hidden" id="authOverlay">
+    <div class="sheet card" id="auth" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="ghost close" data-close="authOverlay" aria-label="Close">✕</button>
+      <span class="eyebrow">Welcome in</span>
+      <h1 id="authTitle">Good to <em>see you</em></h1>
+      <p class="muted">Log in so <span data-cname>Ch<span class="ai-mark">Ai</span>mate</span> remembers you — your stories, your usual order, where you left off.</p>
+      <div class="tabs" id="authTabs">
+        <button data-mode="login" class="on">Log in</button>
+        <button data-mode="signup">Sign up</button>
+      </div>
+      <div id="signupName" class="hidden">
+        <label for="authName">Your name</label>
+        <input id="authName" maxlength="40" placeholder="e.g. Ananya" autocomplete="name" />
+      </div>
+      <label for="authPhone">Mobile number</label>
+      <input id="authPhone" inputmode="tel" maxlength="14" placeholder="98765 43210" autocomplete="tel" />
+      <label for="authPin">PIN (4–6 digits)</label>
+      <input id="authPin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" />
+      <div class="row" style="margin-top:20px">
+        <button class="primary" id="btnAuth">Log in</button>
+        <span id="authMsg" class="muted small"></span>
+      </div>
+      <p class="muted small" style="margin-top:18px">Just visiting? <a href="#" id="btnGuest">Continue as a guest</a> — nothing is remembered.</p>
+    </div>
+  </div>
+
+
+  <!-- ================= SETUP (3 steps) ================= -->
+  <section id="setup" class="studio hidden">
+    <div class="studio-inner wrap">
+      <div class="steps-nav" id="stepsNav"><span class="on">1 · You</span><span>2 · Personality</span><span>3 · Vibe</span></div>
+      <div class="studio-steps">
+        <div class="studio-step card" data-step="0">
+          <h1>First, a little about <em>you</em></h1>
+          <div class="grid2">
+            <div><label for="name">Your name</label><input id="name" placeholder="e.g. Ananya" maxlength="40" /></div>
+            <div><label for="language">Language</label><select id="language"></select></div>
+          </div>
+          <div class="grid2">
+            <div><label for="mode">How you'll talk</label>
+              <select id="mode"><option value="handsfree" selected>Hands-free — just talk</option><option value="ptt">Hold a button to talk</option><option value="text">Type only</option></select></div>
+            <div><label for="output">Play voice on</label>
+              <select id="output"><option value="default">This device / connected earphones</option></select></div>
+          </div>
+          <p class="muted small">Tip: connect AirPods or earphones first for a private chat.</p>
+        </div>
+
+        <div class="studio-step card" data-step="1">
+          <h1>Who's joining you <em>today?</em></h1>
+          <div class="persona-grid" id="personas"></div>
+          <div class="grid2">
+            <div><label for="personaName">Nickname (optional)</label><input id="personaName" placeholder="Leave empty to keep ChAimate" maxlength="30" /></div>
+            <div><label for="voice">Their voice</label><div class="row"><select id="voice" class="grow"></select><button class="outline" id="btnPreview" title="Preview voice">▶ Hear</button></div></div>
+          </div>
+          <label for="pace">Speaking speed</label>
+          <select id="pace"><option value="0.9">Relaxed</option><option value="1" selected>Natural</option><option value="1.15">Quick</option></select>
+        </div>
+
+        <div class="studio-step card" data-step="2">
+          <h1>Set the <em>vibe</em></h1>
+          <label>Mood</label>
+          <div class="chips" id="moods"></div>
+          <label>Topics — pick any</label>
+          <div class="chips" id="topics"></div>
+          <label for="custom">Anything else?</label>
+          <textarea id="custom" maxlength="500" placeholder="e.g. Talk to me in Hinglish, I'm preparing for GATE, tease me about RCB"></textarea>
+        </div>
+      </div>
+      <div class="row studio-actions">
+        <button class="ghost" id="btnBack">← Back</button>
+        <span class="grow"></span>
+        <span class="muted small" id="setupMsg"></span>
+        <button class="primary big" id="btnNext">Next →</button>
+        <button class="primary big hidden" id="btnStart">Save &amp; talk →</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ================= CONVERSATION: a voice call with a friend ================= -->
+  <section id="chat" class="hidden">
+    <div class="call-shell">
+      <div class="call" id="callMain">
+        <div class="call-top">
+          <div class="call-who">
+            <b id="companionName">Ch<span class="ai-mark">Ai</span>mate</b>
+            <span class="call-meta"><span class="live-dot"></span><span id="callTime">00:00</span> · <span id="stageTable"></span> · <span id="meterMini">free minutes</span></span>
+          </div>
+          <button class="round" id="btnMore" aria-label="More options"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r=".6" fill="currentColor"/><circle cx="12" cy="12" r=".6" fill="currentColor"/><circle cx="18" cy="12" r=".6" fill="currentColor"/></svg></button>
+        </div>
+
+        <div class="orb-zone"><div class="orb-wrap idle"><canvas class="orb idle" id="orb" aria-hidden="true"></canvas></div></div>
+        <div class="state-label" id="stateLabel">Connecting…</div>
+        <p class="caption" id="caption" aria-live="polite"></p>
+        <div class="chips mood-switch" id="quickMoods" title="Switch mood"></div>
+
+        <div class="call-bottom">
+          <div class="acts" id="acts" aria-live="polite"></div>
+          <button class="cart-bar hidden" id="cartBar"><span id="cartBarCount">1 item</span><span class="grow"></span><b id="cartBarTotal">₹0</b><span class="cart-bar-go">View cart ›</span></button>
+          <div class="controls">
+            <div class="ctl"><button class="ctl-btn" id="btnMenu" aria-label="Menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5z"/></svg></button><span>Menu</span></div>
+            <div class="ctl ctl-chat"><button class="ctl-btn" id="btnChat" aria-label="Show conversation"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></button><span>Chat</span></div>
+            <div class="ctl ctl-main"><button class="talk-btn" id="btnTalk" aria-label="Microphone" title="Mute / unmute"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12z" fill="currentColor"/></svg></button><span id="talkHint">Mic on</span></div>
+            <div class="ctl"><button class="ctl-btn" id="btnSpeaker" aria-label="Voice replies"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button><span id="speakerHint">Voice</span></div>
+            <div class="ctl"><button class="ctl-btn end" id="btnEnd" aria-label="End chat"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span>End</span></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="convo" id="convo" aria-label="Conversation">
+        <div class="convo-head"><span class="grip"></span><b>Conversation</b><button class="round" id="btnChatClose" aria-label="Close">✕</button></div>
+        <div class="transcript" id="transcript" data-lenis-prevent></div>
+        <div class="composer">
+          <input id="textInput" class="grow" placeholder="Type a message — or just talk" autocomplete="off" />
+          <button class="primary" id="btnSend">Send</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= MENU (Swiggy-style list) ================= -->
+  <div class="overlay hidden" id="menuOverlay">
+    <div class="panel menu-panel" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+      <div class="panel-head">
+        <span class="grip"></span>
+        <h2 id="menuTitle">Menu</h2>
+        <button class="round" data-close="menuOverlay" aria-label="Close">✕</button>
+      </div>
+      <div class="menu-tools">
+        <label class="search"><span aria-hidden="true">🔍</span><input id="menuSearch" placeholder="Search chai, biryani, snacks…" autocomplete="off" /></label>
+        <label class="veg-toggle"><input type="checkbox" id="vegOnly" /><span class="switch"></span><span>Veg only</span></label>
+      </div>
+      <div class="chips cat-tabs" id="catTabs"></div>
+      <div class="menu-list" id="menu" data-lenis-prevent></div>
+      <button class="cart-bar in-menu hidden" id="menuCartBar"><span id="menuCartCount">1 item</span><span class="grow"></span><b id="menuCartTotal">₹0</b><span class="cart-bar-go">View cart ›</span></button>
+    </div>
+  </div>
+
+  <!-- ================= CART + TABLE ================= -->
+  <div class="overlay hidden" id="cartOverlay">
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <div class="panel-head"><span class="grip"></span><h2 id="cartTitle">Your table</h2><button class="round" data-close="cartOverlay" aria-label="Close">✕</button></div>
+      <div class="panel-body" data-lenis-prevent>
+        <div class="card" id="cartCard">
+          <div class="row card-head"><h3 class="grow">Cart</h3><b id="cartTotal"></b></div>
+          <div id="cart"><p class="muted small">Empty — just say what you'd like, or add from the menu.</p></div>
+          <button id="btnConfirm" class="accent big hidden" style="width:100%;margin-top:14px">Place order</button>
+        </div>
+        <div class="card" id="ordersCard">
+          <div class="row card-head"><h3 class="grow">Orders</h3><b id="billTotal">—</b></div>
+          <div id="orders"><p class="muted small">No orders yet.</p></div>
+          <div id="aiLine" class="line-item hidden"><span><span data-cname>Ch<span class="ai-mark">Ai</span>mate</span> chat · <span id="aiMin">0</span> min</span><span id="aiAmt">₹0</span></div>
+        </div>
+        <div class="card meter-card">
+          <div class="meter-ring">
+            <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" class="ring-bg"/><circle cx="32" cy="32" r="27" class="ring-fg" id="meterRing"/></svg>
+            <span id="meterNum">10</span>
+          </div>
+          <div><b id="meterTitle">10 free minutes</b><div class="muted small" id="meterSub">Only minutes you actually talk count.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MORE ================= -->
+  <div class="overlay hidden" id="moreOverlay">
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="moreTitle">
+      <div class="panel-head"><span class="grip"></span><h2 id="moreTitle">More</h2><button class="round" data-close="moreOverlay" aria-label="Close">✕</button></div>
+      <div class="panel-body" data-lenis-prevent>
+        <div class="quick-actions">
+          <button class="tile" id="btnWaiter"><span>🙋</span>Call waiter</button>
+          <button class="tile" id="btnBill"><span>🧾</span>Ask for bill</button>
+          <button class="tile" id="btnTable"><span>🍽️</span>Your table</button>
+          <button class="tile" id="btnSettings2"><span>🎨</span>Change personality</button>
+        </div>
+        <div class="card hidden" id="memoryCard">
+          <div class="row card-head"><h3 class="grow">What I remember</h3></div>
+          <div id="memories"></div>
+          <div id="favWrap" class="hidden">
+            <h3 style="margin-top:14px">Your usuals</h3>
+            <div id="favourites" class="chips"></div>
+          </div>
+          <button class="ghost danger small-btn" id="btnForgetAll">Forget everything</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button id="soundPrompt" class="sound-prompt primary hidden">🔊 Tap to hear the voice</button>
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/static/js/errors.js"></script>
+  <script src="/static/js/fx.js"></script>
+  <script src="/static/vendor/gsap.min.js"></script>
+  <script src="/static/vendor/ScrollTrigger.min.js"></script>
+  <script src="/static/vendor/lenis.min.js"></script>
+  <script type="importmap">{ "imports": { "three": "/static/vendor/three/three.module.min.js", "three/addons/": "/static/vendor/three/addons/" } }</script>
+  <script type="module" src="/static/js/scene3d.js"></script>
+  <script src="/static/js/table.js"></script>
+</body>
+</html>

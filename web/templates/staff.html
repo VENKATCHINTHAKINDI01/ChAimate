@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cafe Staff</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%2210%22 fill=%22%23D9531E%22/%3E%3Cpath d=%22M9 12h12v6a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6zM21 14h2a2 2 0 0 1 0 4h-2%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%222.2%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/base.css" />
+  <style>
+    .staff-hero { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 18px 0 22px; flex-wrap: wrap; }
+    .staff-hero h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); margin: 0; letter-spacing: -.03em; }
+    .login-wrap { min-height: calc(100vh - 70px); display: grid; grid-template-columns: minmax(320px, 420px) 1fr; align-items: center; gap: 24px; position: relative; }
+    @media (max-width: 800px) { .login-wrap { grid-template-columns: 1fr; } .login-3d { position: relative !important; height: 260px !important; order: -1; } }
+    .login-card { width: min(400px, 100%); padding: 32px; }
+    .login-3d { position: relative; width: 100%; height: min(560px, 70vh); display: block; pointer-events: none; }
+    #who { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; margin-left: 10px; }
+    #clock { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; }
+    .ai-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-top: 14px; }
+    @media (max-width: 900px) { .ai-grid { grid-template-columns: 1fr; } }
+    .model-chip { font-size: .8rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-solid); font-weight: 700; }
+    .model-chip b { color: var(--caramel); margin-right: 4px; }
+    .ev-role { font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; width: 70px; display: inline-block; }
+    .ev-role.user { color: var(--sage); } .ev-role.assistant { color: var(--caramel); }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="row"><span class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="#D9531E"/><path d="M9 12h12v6a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6zM21 14h2a2 2 0 0 1 0 4h-2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></svg><span id="cafeName">Café</span></span><span class="muted" id="who">Staff</span></div>
+    <div class="row no-print">
+      <div class="tabs" id="tabs"></div>
+      <button class="ghost hidden" id="btnLogout">Log out</button>
+    </div>
+  </div>
+
+  <section id="login" class="wrap login-wrap">
+    <div class="card login-card spot">
+      <div class="frame" aria-hidden="true" style="position:absolute;inset:0;border-radius:inherit;pointer-events:none"></div>
+      <span class="eyebrow">Behind the counter</span>
+      <h1 style="margin-top:10px">Good to see you.</h1>
+      <label for="username">Username</label>
+      <input id="username" autocomplete="username" autocapitalize="none" placeholder="manager / kitchen / bar / waiter" />
+      <label for="pin">PIN</label>
+      <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" />
+      <div class="row" style="margin-top:12px"><button class="primary" id="btnLogin">Log in</button><span id="loginMsg" class="muted"></span></div>
+    </div>
+      <canvas class="login-3d" id="login3d" aria-hidden="true"></canvas>
+  </section>
+
+  <main id="app" class="wrap hidden">
+    <div class="staff-hero"><h1 id="viewTitle">Overview</h1><span class="muted" id="clock"></span></div>
+    <!-- Manager overview -->
+    <section data-view="overview" class="hidden">
+      <div class="staff-grid" style="margin-bottom:16px">
+        <div class="card kpi"><span class="muted">Orders today</span><b id="kOrders">0</b></div>
+        <div class="card kpi"><span class="muted">Revenue today</span><b id="kRevenue">0</b></div>
+        <div class="card kpi"><span class="muted">Returning customers today</span><b id="kReturning">0</b></div>
+        <div class="card kpi"><span class="muted">Live AI chats</span><b id="kLive">0</b></div>
+      </div>
+      <div class="board">
+        <div class="col"><h2>New</h2><div id="col-new"></div></div>
+        <div class="col"><h2>Preparing</h2><div id="col-preparing"></div></div>
+        <div class="col"><h2>Ready</h2><div id="col-ready"></div></div>
+        <div class="col"><h2>Served</h2><div id="col-served"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h2>Top sellers today</h2>
+        <div id="topItems" class="muted">—</div>
+      </div>
+    </section>
+
+    <!-- Kitchen / Bar station -->
+    <section data-view="station" class="hidden">
+      <div class="board" style="grid-template-columns:repeat(3,1fr)">
+        <div class="col"><h2>To make</h2><div id="st-queued"></div></div>
+        <div class="col"><h2>In progress</h2><div id="st-preparing"></div></div>
+        <div class="col"><h2>Ready · waiting for pickup</h2><div id="st-ready"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h2>Stock</h2>
+        <p class="muted">Ran out of something? Switch it off — the AI stops offering it immediately.</p>
+        <div id="stock" class="chips"></div>
+      </div>
+    </section>
+
+    <!-- Waiter floor -->
+    <section data-view="floor" class="hidden">
+      <div class="card" style="margin-bottom:16px">
+        <h2>🔔 Table requests</h2>
+        <div id="requests" class="row"></div>
+      </div>
+      <div class="board" style="grid-template-columns:repeat(2,1fr)">
+        <div class="col"><h2>✅ Ready to serve</h2><div id="fl-ready"></div></div>
+        <div class="col"><h2>⏳ Being prepared</h2><div id="fl-progress"></div></div>
+      </div>
+    </section>
+
+    <!-- Tables -->
+    <section data-view="tables" class="hidden">
+      <div class="tables" id="tables"></div>
+    </section>
+
+    <!-- Menu (manager) -->
+    <section data-view="menu" class="hidden">
+      <div class="card" style="margin-bottom:16px">
+        <h2>Add item</h2>
+        <div class="row">
+          <input id="nName" placeholder="Name" class="grow" />
+          <input id="nCat" placeholder="Category" style="max-width:160px" list="cats" />
+          <datalist id="cats"></datalist>
+          <input id="nPrice" type="number" placeholder="Price" style="max-width:110px" />
+          <select id="nStation" style="max-width:130px"><option value="kitchen">Kitchen</option><option value="bar">Bar</option></select>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <input id="nDesc" placeholder="Short description" class="grow" />
+          <label class="row" style="margin:0"><input type="checkbox" id="nVeg" checked style="width:auto" /> Veg</label>
+          <label class="row" style="margin:0"><input type="checkbox" id="nSpicy" style="width:auto" /> Spicy</label>
+          <button class="primary" id="btnAdd">Add</button>
+        </div>
+      </div>
+      <div class="card">
+        <table class="menu"><thead><tr><th>Item</th><th>Category</th><th>Station</th><th>Price</th><th>Available</th><th></th></tr></thead>
+          <tbody id="menuRows"></tbody></table>
+      </div>
+    </section>
+
+    <!-- Staff (manager) -->
+    <section data-view="staff" class="hidden">
+      <div class="card" style="margin-bottom:16px">
+        <h2>Add staff member</h2>
+        <div class="row">
+          <input id="sName" placeholder="Full name" class="grow" />
+          <input id="sUser" placeholder="Username" style="max-width:160px" autocapitalize="none" />
+          <select id="sRole" style="max-width:140px">
+            <option value="waiter">Waiter</option><option value="kitchen">Kitchen</option>
+            <option value="bar">Bar</option><option value="manager">Manager</option>
+          </select>
+          <input id="sPin" placeholder="PIN" inputmode="numeric" maxlength="6" style="max-width:100px" />
+          <button class="primary" id="btnAddStaff">Add</button>
+        </div>
+      </div>
+      <div class="card">
+        <table class="menu"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th></th></tr></thead>
+          <tbody id="staffRows"></tbody></table>
+      </div>
+    </section>
+
+    <!-- Customers (manager) -->
+    <section data-view="customers" class="hidden">
+      <div class="card">
+        <h2>Registered customers</h2>
+        <table class="menu"><thead><tr><th>Name</th><th>Phone</th><th>Visits</th><th>Last seen</th><th>Total spent</th></tr></thead>
+          <tbody id="custRows"></tbody></table>
+      </div>
+    </section>
+
+    <!-- Analytics (manager) -->
+    <section data-view="analytics" class="hidden">
+      <div class="an-filters">
+        <div class="tabs" id="periodTabs">
+          <button data-p="today">Today</button><button data-p="7d" class="on">7 days</button>
+          <button data-p="30d">30 days</button><button data-p="90d">90 days</button>
+        </div>
+        <span class="muted" style="font-size:.85rem" id="periodNote"></span>
+      </div>
+
+      <div class="an-top">
+        <div class="card hero-fig">
+          <div><div class="muted" style="font-weight:600;font-size:.85rem">Total revenue · food + AI chat</div>
+            <div class="num" id="heroRevenue">—</div></div>
+          <div class="row" style="justify-content:space-between"><span id="heroDelta" class="delta"></span><span id="heroSpark"></span></div>
+        </div>
+        <div class="tiles" id="tiles"></div>
+      </div>
+
+      <div class="card an-wide" id="briefingCard">
+        <div class="row"><div class="grow"><p class="eyebrow" style="margin:0 0 4px">AI store manager</p><h2 style="margin:0">Today's briefing</h2></div>
+          <span class="muted" style="font-size:.8rem" id="briefingWhen"></span>
+          <button class="primary" id="btnBriefing">Generate briefing</button></div>
+        <div id="briefing"><p class="muted" style="margin:10px 0 0">Get 4–6 ranked, data-backed recommendations — with one-click actions you approve.</p></div>
+      </div>
+
+      <div class="an-grid">
+        <div class="card"><h2>Revenue</h2><p class="sub" id="trendSub">Food orders and AI chat, per day</p><div id="chTrend"></div></div>
+        <div class="card"><h2>What needs your attention</h2><p class="sub">Automatic findings vs the previous period</p><div id="findings"></div></div>
+      </div>
+
+      <div class="an-grid">
+        <div class="card"><h2>Busy hours</h2><p class="sub">Average orders per week, last 4+ weeks — staff and prep for the dark cells</p><div id="chHeat"></div></div>
+        <div class="card"><h2>Orders by weekday</h2><p class="sub">Average orders per week</p><div id="chWeekday"></div></div>
+      </div>
+
+      <div class="an-grid three">
+        <div class="card"><h2>Top sellers</h2><p class="sub">By revenue · change in units vs previous period</p><div id="chTop"></div></div>
+        <div class="card"><h2>Needs a push</h2><p class="sub">Falling or slowest-moving items</p><div id="chSlow"></div></div>
+        <div class="card"><h2>Category mix</h2><p class="sub">Revenue by category</p><div id="chCats"></div></div>
+      </div>
+
+      <div class="an-grid three">
+        <div class="card"><h2>Regulars slipping away</h2><p class="sub">3+ visits, not seen in 14+ days</p><div id="atRisk"></div></div>
+        <div class="card"><h2>Top customers</h2><p class="sub">By spend in this period</p><div id="topCust"></div></div>
+        <div class="card"><h2>Favourite companions</h2><p class="sub">Personas registered customers chose</p><div id="chPersonas"></div></div>
+      </div>
+
+      <div class="an-grid">
+        <div class="card"><h2>Kitchen & service speed</h2><p class="sub">Average minutes from order to ready, and ready to served</p><div id="chOps"></div><div id="opsNote" class="muted" style="font-size:.85rem;margin-top:8px"></div></div>
+        <div class="card"><h2>ChAimate (AI companion)</h2><p class="sub">Chat minutes, revenue and cost</p><div id="aiStats"></div></div>
+      </div>
+    </section>
+
+    <!-- AI store manager (manager) -->
+    <section data-view="agent" class="hidden">
+      <div class="agent-layout">
+        <div class="card agent-chat">
+          <div class="agent-log" id="agentLog">
+            <div class="msg ai"><p>Hi! I'm your AI store manager. I can dig into sales, menu, customers, busy hours, kitchen speed and the AI companion — and propose changes you can approve with one click.</p><p>What would you like to know?</p></div>
+          </div>
+          <div class="suggest" id="agentSuggest">
+            <span class="chip">How did we do this week?</span>
+            <span class="chip">Which items should I promote or drop?</span>
+            <span class="chip">When do I need more staff?</span>
+            <span class="chip">How can I increase average order value?</span>
+            <span class="chip">Which regulars should I win back?</span>
+          </div>
+          <div class="agent-input">
+            <input id="agentInput" class="grow" placeholder="Ask about sales, menu, customers, staffing…" />
+            <button class="primary" id="agentSend">Ask</button>
+            <button class="ghost" id="agentReset" title="Start a new conversation">New chat</button>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="row"><h2 class="grow" style="margin:0">Waiting for your approval</h2><span class="badge" id="pendingCount">0</span></div>
+            <p class="muted" style="font-size:.85rem;margin:6px 0 0">Nothing changes until you approve it.</p>
+            <div id="pending"></div>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <h2 style="margin:0 0 6px">Live promotions</h2>
+            <p class="muted" style="font-size:.85rem;margin:0">ChAimate recommends these to customers.</p>
+            <div id="promos"></div>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <h2 style="margin:0 0 6px">Decision log</h2>
+            <div id="decided" class="feed" style="max-height:260px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI usage (manager) -->
+    <section data-view="ai" class="hidden">
+      <div class="staff-grid">
+        <div class="card kpi"><span class="muted">AI chat minutes today</span><b id="aMinutes">0</b></div>
+        <div class="card kpi"><span class="muted">AI revenue settled today</span><b id="aRevenue">0</b></div>
+        <div class="card kpi"><span class="muted">LLM cost today</span><b id="aCost">$0</b></div>
+        <div class="card kpi"><span class="muted">Replies · tokens today</span><b id="aTurns">0</b></div>
+      </div>
+      <div class="ai-grid">
+        <div class="card">
+          <div class="row"><h2 class="grow">Live conversations</h2><span id="redisState" class="badge">redis</span></div>
+          <div class="table-scroll"><table class="menu"><thead><tr><th>Table</th><th>Who</th><th>Minutes</th><th>Billable</th><th>Tokens</th><th>LLM cost</th><th>Model</th></tr></thead>
+            <tbody id="aiLive"></tbody></table></div>
+          <h2 style="margin-top:20px">Gateway</h2>
+          <div class="row" id="aiModels"></div>
+          <p class="muted" style="font-size:.85rem;margin-top:10px" id="aiPricing"></p>
+        </div>
+        <div class="card">
+          <h2>Live activity</h2>
+          <div class="feed" id="aiFeed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QR -->
+    <section data-view="qr" class="hidden">
+      <div class="row no-print" style="margin-bottom:12px">
+        <p class="muted grow">Print these and place one on each table. Customers scan to start chatting with ChAimate — their AI companion.</p>
+        <button class="primary" onclick="print()">Print</button>
+      </div>
+      <div class="qr-sheet" id="qrs"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/js/errors.js"></script>
+  <script src="/static/js/fx.js"></script>
+  <script src="/static/vendor/gsap.min.js"></script>
+  <script src="/static/js/charts.js"></script>
+  <script type="importmap">{ "imports": { "three": "/static/vendor/three/three.module.min.js", "three/addons/": "/static/vendor/three/addons/" } }</script>
+  <script type="module" src="/static/js/scene3d.js"></script>
+  <script src="/static/js/staff.js"></script>
+</body>
+</html>

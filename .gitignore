@@ -1,0 +1,50 @@
+# ───────────────────────── secrets & machine-local config ─────────────────────────
+.env
+.env.*
+!.env.example
+# local HTTPS certificate made by scripts/https.sh
+certs/
+frontend/.env*.local
+
+# ───────────────────────── runtime data & logs ─────────────────────────
+# local SQLite database (data/cafe.db)
+data/
+*.db
+*.db-journal
+logs/
+*.log
+
+# ───────────────────────── Python ─────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ───────────────────────── Deccan House website (Next.js, frontend/) ─────────────────────────
+frontend/node_modules/
+frontend/.next/
+# static export served at / (rebuild with `make web`)
+frontend/out/
+# generated from frontend/assets/photos by scripts/optimize-images.mjs
+frontend/public/img/
+# MapLibre worker copied by scripts/copy-vendor.mjs
+frontend/public/vendor/
+# generated photo manifest (sizes + blur placeholders)
+frontend/lib/photos.json
+frontend/next-env.d.ts
+frontend/*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# ───────────────────────── tooling / OS / editors ─────────────────────────
+.playwright/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
