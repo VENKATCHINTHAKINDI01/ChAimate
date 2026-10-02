@@ -623,11 +623,11 @@
   }
   // visual effects: ribbon light behind the login, spotlight borders on cards
   if (window.FX) {
-    // the login shows the same 3D kulhad as the customer app (calm "mini" mode); nothing if 3D isn't available
+    // the login shows the same 3D steam spirit as the customer app (calm "mini" mode); nothing if 3D isn't available
     const mountLogin3D = () => {
       const S3 = window.Scene3D, tier = S3 ? S3.qualityTier() : "none";
       if (tier !== "none" && !mountLogin3D.done) { mountLogin3D.done = true;
-        new S3.KulhadScene($("login3d"), { mode: "mini", quality: tier, layout: (w) => ({ x: 0, y: -0.1, scale: w < 500 ? .7 : .9 }) }); }
+        new S3.SpiritScene($("login3d"), { mode: "mini", quality: tier, layout: (w) => ({ x: 0, y: -0.1, scale: w < 500 ? .7 : .9 }) }); }
     };
     if (window.Scene3D) mountLogin3D(); else window.addEventListener("scene3d-ready", mountLogin3D, { once: true });
     FX.spotlight();

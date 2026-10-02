@@ -121,8 +121,8 @@
     withScene3D((S3) => {
       const tier = S3 ? S3.qualityTier() : "none";
       if (tier === "none") { $("hero3d").classList.add("hidden"); $("heroFallback").classList.remove("hidden"); return; }
-      // the kulhad sits to the right of the copy on wide screens, centred above it on phones
-      heroOrb = new S3.KulhadScene($("hero3d"), { mode: "hero", quality: tier,
+      // the steam spirit sits to the right of the copy on wide screens, centred above it on phones
+      heroOrb = new S3.SpiritScene($("hero3d"), { mode: "hero", quality: tier,
         layout: (w, h) => w > 960 ? { x: Math.min(3.1, 1.6 + w / 1000), y: -0.1, scale: .92 } : { x: 0, y: 0.05, scale: .82 } });
       document.body.dataset.quality = tier;
     });
@@ -132,8 +132,9 @@
     withScene3D((S3) => {
       if (chatOrb) return;
       const tier = S3 ? S3.qualityTier() : "none";
-      // ChAimate's face: the living 3D kulhad; the 2D glowing orb where 3D isn't available
-      if (tier !== "none") chatOrb = new S3.KulhadScene($("orb"), { mode: "avatar", quality: tier, layout: (w) => ({ x: 0, y: -0.1, scale: w < 520 ? .62 : .76 }) });
+      // ChAimate's face: the 3D steam spirit in the persona's colours; the 2D glowing orb where 3D isn't available
+      if (tier !== "none") chatOrb = new S3.SpiritScene($("orb"), { mode: "avatar", quality: tier, palette: personaLook(prefs.persona)[2],
+        layout: (w) => ({ x: 0, y: -0.1, scale: w < 520 ? .62 : .76 }) });
       else if (window.FX) chatOrb = FX.GlowOrb($("orb"), { state: "idle", palette: personaLook(prefs.persona)[2] });
       if (chatOrb) chatOrb.setState(state === "transcribing" ? "thinking" : state);
     });

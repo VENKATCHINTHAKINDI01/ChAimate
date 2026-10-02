@@ -68,7 +68,7 @@ The website and ChAimate share one art direction: understated luxury with a quie
 - **3D:**
   - **Website hero:** a porcelain cup on Nero Marquina marble, with steam, a rippling surface and latte art. The cup, the light and the camera follow your cursor.
   - **Website walkthrough:** a cut-away model of the café with hotspots (Coffee Bar, Private Dining, Outdoor Seating, Bakery, Work Lounge) that fly the camera to each space.
-  - **ChAimate:** a hand-thrown clay kulhad is ChAimate's face. It breathes while listening, its spices whirl while thinking, and its steam and chai ripple with the voice while speaking.
+  - **ChAimate:** a glowing spirit of chai steam is ChAimate's face, in the colours of the chosen persona. It drifts while idle, brightens and gathers while listening, spirals into a vortex while thinking, and pulses and puffs steam with the voice while speaking.
 - **Motion:**
   - Lenis smooth scrolling and GSAP ScrollTrigger reveals (word by word, image masks, parallax).
   - A pinned horizontal reel, magnetic buttons and a custom cursor that reads VIEW / EXPLORE / BOOK / TALK.
@@ -104,7 +104,7 @@ The website and ChAimate share one art direction: understated luxury with a quie
 
 ### ChAimate (table app)
 
-| Landing | Voice-first call screen: the living 3D kulhad |
+| Landing | Voice-first call screen: the living 3D steam spirit |
 |---|---|
 | <img src="docs/screenshots/customer-landing.jpg" alt="ChAimate landing" /> | <img src="docs/screenshots/customer-call.jpg" alt="ChAimate call screen" /> |
 | **Menu with direct ADD / − 1 +** | **Cart and table bill** |
